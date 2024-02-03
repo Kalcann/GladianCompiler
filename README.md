@@ -1,4 +1,4 @@
-# GladianCompiler
+# RunicCompiler
 An application for recording and translating between a runic system using a 5x5 grid
 
 All images are required to stay in the same hierarchy to run
