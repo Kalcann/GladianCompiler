@@ -1,4 +1,5 @@
 import sys
+import json
 from tkinter import *
 from tkinter import font
 from tkinter.messagebox import showinfo
@@ -24,10 +25,10 @@ def openFile():
     global fileSelector
     global content
     try:
-        file = open("compiled.dat")
-        for line in file:
-            stringValue, name = line.rstrip('\n').split(',')
-            content.append([Rune(stringValue), name])
+        f = open("compiled.json")
+        data = json.load(f)
+        for key in data:
+            content.append([Rune(key), data[key]])
         for i in content:
             contentList.insert(END, i[1])
         contentList.insert(END, "--Add New--")
@@ -35,7 +36,7 @@ def openFile():
         fileSelector = Toplevel(root)
         fileSelector.geometry("250x125")
         fileSelector.protocol("WM_DELETE_WINDOW", myExit)
-        label = Label(fileSelector, text="compiled.dat not found", font=listFont, padx=20, pady=10)
+        label = Label(fileSelector, text="compiled.json not found", font=listFont, padx=20, pady=10)
         label.pack()
         newFile = Button(fileSelector, text="Create new file?", font=listFont, command=createnewFile, pady=10)
         newFile.pack()
@@ -278,15 +279,20 @@ def onSelectItem(event):
             
 def saveAndExit():
     global content
-    file = open("compiled.dat", 'w')
-    for cont in content:
+    file = open("compiled.json", 'w')
+    file.write("{\n")
+    for i in range(len(content)):
         string = ''
-        for val in cont[0].getGridValues():
+        for val in content[i][0].getGridValues():
             if val:
                 string += '1'
             else:
                 string += '0'
-        file.write(f"{string},{cont[1]}\n")
+        if i == len(content) - 1:
+            file.write(f"\t\"{string}\": \"{content[i][1]}\"\n")
+        else:
+            file.write(f"\t\"{string}\": \"{content[i][1]}\",\n")
+    file.write("}")
     sys.exit()
             
         
